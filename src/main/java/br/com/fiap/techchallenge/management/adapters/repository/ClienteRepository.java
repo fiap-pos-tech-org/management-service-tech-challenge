@@ -3,13 +3,10 @@ package br.com.fiap.techchallenge.management.adapters.repository;
 import br.com.fiap.techchallenge.management.adapters.repository.jpa.ClienteJpaRepository;
 import br.com.fiap.techchallenge.management.adapters.repository.mappers.ClienteMapper;
 import br.com.fiap.techchallenge.management.adapters.repository.models.Cliente;
-import br.com.fiap.techchallenge.management.core.dtos.ClienteDTO;
 import br.com.fiap.techchallenge.management.core.domain.exceptions.BadRequestException;
 import br.com.fiap.techchallenge.management.core.domain.exceptions.EntityNotFoundException;
-import br.com.fiap.techchallenge.management.core.ports.out.cliente.AtualizaClienteOutputPort;
-import br.com.fiap.techchallenge.management.core.ports.out.cliente.BuscaClienteOutputPort;
-import br.com.fiap.techchallenge.management.core.ports.out.cliente.BuscaTodosClientesOutputPort;
-import br.com.fiap.techchallenge.management.core.ports.out.cliente.CadastraClienteOutputPort;
+import br.com.fiap.techchallenge.management.core.dtos.ClienteDTO;
+import br.com.fiap.techchallenge.management.core.ports.out.cliente.*;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,7 +17,8 @@ import java.util.List;
 
 
 @Repository
-public class ClienteRepository implements AtualizaClienteOutputPort, BuscaClienteOutputPort, BuscaTodosClientesOutputPort, CadastraClienteOutputPort {
+public class ClienteRepository implements AtualizaClienteOutputPort, BuscaClienteOutputPort, BuscaTodosClientesOutputPort,
+        CadastraClienteOutputPort, RemoveClientePorIdOutputPort {
 
     private final ClienteJpaRepository clienteJpaRepository;
     private final ClienteMapper mapper;
@@ -59,11 +57,7 @@ public class ClienteRepository implements AtualizaClienteOutputPort, BuscaClient
 
     @Override
     public ClienteDTO buscar(Long id) {
-        Cliente cliente = clienteJpaRepository.findById(id)
-                .orElseThrow(
-                        () -> new EntityNotFoundException(String.format("Cliente com id %s não encontrado", id))
-                );
-
+        var cliente = buscaClientePorId(id);
         return mapper.toClienteDTO(cliente);
     }
 
@@ -84,5 +78,17 @@ public class ClienteRepository implements AtualizaClienteOutputPort, BuscaClient
             throw new BadRequestException("Os campos email ou CPF já foram cadastrados");
         }
 
+    }
+
+    @Override
+    public ClienteDTO removerPorId(Long id) {
+        var cliente = buscaClientePorId(id);
+        clienteJpaRepository.delete(cliente);
+        return mapper.toClienteDTO(cliente);
+    }
+
+    private Cliente buscaClientePorId(Long id) {
+        return clienteJpaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Cliente com id %s não encontrado", id)));
     }
 }

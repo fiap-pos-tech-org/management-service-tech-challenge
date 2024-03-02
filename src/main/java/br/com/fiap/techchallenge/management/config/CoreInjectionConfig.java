@@ -1,19 +1,10 @@
 package br.com.fiap.techchallenge.management.config;
 
-import br.com.fiap.techchallenge.management.core.ports.in.cliente.AtualizaClienteInputPort;
-import br.com.fiap.techchallenge.management.core.ports.in.cliente.BuscaClientePorIdOuCpfInputPort;
-import br.com.fiap.techchallenge.management.core.ports.in.cliente.BuscaTodosClientesInputPort;
-import br.com.fiap.techchallenge.management.core.ports.in.cliente.CadastraClienteInputPort;
+import br.com.fiap.techchallenge.management.core.ports.in.cliente.*;
 import br.com.fiap.techchallenge.management.core.ports.in.produto.*;
-import br.com.fiap.techchallenge.management.core.ports.out.cliente.AtualizaClienteOutputPort;
-import br.com.fiap.techchallenge.management.core.ports.out.cliente.BuscaClienteOutputPort;
-import br.com.fiap.techchallenge.management.core.ports.out.cliente.BuscaTodosClientesOutputPort;
-import br.com.fiap.techchallenge.management.core.ports.out.cliente.CadastraClienteOutputPort;
+import br.com.fiap.techchallenge.management.core.ports.out.cliente.*;
 import br.com.fiap.techchallenge.management.core.ports.out.produto.*;
-import br.com.fiap.techchallenge.management.core.usecases.cliente.AtualizaClienteUseCase;
-import br.com.fiap.techchallenge.management.core.usecases.cliente.BuscaClientePorIdOuCpfIdOuCpfUseCase;
-import br.com.fiap.techchallenge.management.core.usecases.cliente.BuscaTodosClientesUseCase;
-import br.com.fiap.techchallenge.management.core.usecases.cliente.CadastraClienteUseCase;
+import br.com.fiap.techchallenge.management.core.usecases.cliente.*;
 import br.com.fiap.techchallenge.management.core.usecases.produto.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -74,6 +65,11 @@ public class CoreInjectionConfig {
     @Bean
     CadastraClienteInputPort cadastraCliente(CadastraClienteOutputPort cadastraClienteOutputPort) {
         return new CadastraClienteUseCase(cadastraClienteOutputPort);
+    }
+
+    @Bean
+    RemoveClientePorIdInputPort removerPorId(RemoveClientePorIdOutputPort removeClientePorIdOutputPort) {
+        return new RemoveClientePorIdUseCase(removeClientePorIdOutputPort);
     }
 
 }

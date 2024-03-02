@@ -4,10 +4,7 @@ import br.com.fiap.techchallenge.management.adapters.web.mappers.ClienteMapper;
 import br.com.fiap.techchallenge.management.adapters.web.models.requests.ClienteRequest;
 import br.com.fiap.techchallenge.management.adapters.web.models.responses.ClienteResponse;
 import br.com.fiap.techchallenge.management.core.dtos.ClienteDTO;
-import br.com.fiap.techchallenge.management.core.ports.in.cliente.AtualizaClienteInputPort;
-import br.com.fiap.techchallenge.management.core.ports.in.cliente.BuscaClientePorIdOuCpfInputPort;
-import br.com.fiap.techchallenge.management.core.ports.in.cliente.BuscaTodosClientesInputPort;
-import br.com.fiap.techchallenge.management.core.ports.in.cliente.CadastraClienteInputPort;
+import br.com.fiap.techchallenge.management.core.ports.in.cliente.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,18 +24,21 @@ public class ClienteController extends ControllerBase {
     private final BuscaClientePorIdOuCpfInputPort buscaClientePorIdOuCpfInputPort;
     private final BuscaTodosClientesInputPort buscaTodosClientesInputPort;
     private final CadastraClienteInputPort cadastraClienteInputPort;
+    private final RemoveClientePorIdInputPort removeClientePorIdInputPort;
     private final ClienteMapper mapperWeb;
 
     public ClienteController(AtualizaClienteInputPort atualizaClienteInputPort,
                              BuscaClientePorIdOuCpfInputPort buscaClientePorIdOuCpfInputPort,
                              BuscaTodosClientesInputPort buscaTodosClientesInputPort,
                              CadastraClienteInputPort cadastraClienteInputPort,
+                             RemoveClientePorIdInputPort removeClientePorIdInputPort,
                              ClienteMapper mapperWeb
     ) {
         this.atualizaClienteInputPort = atualizaClienteInputPort;
         this.buscaClientePorIdOuCpfInputPort = buscaClientePorIdOuCpfInputPort;
         this.buscaTodosClientesInputPort = buscaTodosClientesInputPort;
         this.cadastraClienteInputPort = cadastraClienteInputPort;
+        this.removeClientePorIdInputPort = removeClientePorIdInputPort;
         this.mapperWeb = mapperWeb;
     }
 
@@ -81,6 +81,15 @@ public class ClienteController extends ControllerBase {
         ClienteDTO clienteAtualizado = atualizaClienteInputPort.atualizar(clienteRequest.toClienteDTO(), id);
 
         return ResponseEntity.ok(mapperWeb.toClienteResponse(clienteAtualizado));
+    }
+
+    @Operation(summary = "Remove um Cliente por Id")
+    @DeleteMapping(value = "/{id}")
+    public @ResponseBody ResponseEntity<ClienteResponse> removerPorId(@Parameter(example = "1") @PathVariable("id") Long id) {
+        var clienteOut = removeClientePorIdInputPort.removerPorId(id);
+        var produtoResponse = mapperWeb.toClienteResponse(clienteOut);
+
+        return ResponseEntity.ok(produtoResponse);
     }
 
 }

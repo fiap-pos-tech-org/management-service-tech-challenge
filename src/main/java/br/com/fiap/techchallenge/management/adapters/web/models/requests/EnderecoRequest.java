@@ -3,6 +3,7 @@ package br.com.fiap.techchallenge.management.adapters.web.models.requests;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class EnderecoRequest {
 
@@ -27,6 +28,7 @@ public class EnderecoRequest {
     private String cidade;
 
     @Schema(example = "MG")
+    @Size(min = 2, max = 2, message = "O campo 'estado' deve ter dois caracteres")
     @NotBlank(message = "O campo 'estado' é obrigatório")
     private String estado;
 

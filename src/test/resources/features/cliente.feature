@@ -22,3 +22,8 @@ Funcionalidade: Cliente
     Dado que um cliente já está cadastrado
     Quando realizar a busca do cliente
     Então o cliente deve ser exibido com sucesso
+
+  Cenário: Remover um cliente por id
+    Dado que um cliente já está cadastrado
+    Quando realizar a requisição para remover o cliente por id
+    Então o cliente deve ser removido com sucesso

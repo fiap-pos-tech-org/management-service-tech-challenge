@@ -6,7 +6,9 @@
     "id",
     "nome",
     "cpf",
-    "email"
+    "email",
+    "telefone",
+    "endereco"
   ],
   "properties": {
     "id": {
@@ -20,6 +22,44 @@
     },
     "email": {
       "type": "string"
+    },
+    "telefone": {
+      "type": "string"
+    },
+    "endereco": {
+      "type": "object",
+      "required": [
+        "id",
+        "logradouro",
+        "rua",
+        "numero",
+        "bairro",
+        "cidade",
+        "estado"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "logradouro": {
+          "type": "string"
+        },
+        "rua": {
+          "type": "string"
+        },
+        "numero": {
+          "type": "integer"
+        },
+        "bairro": {
+          "type": "string"
+        },
+        "cidade": {
+          "type": "string"
+        },
+        "estado": {
+          "type": "string"
+        }
+      }
     }
   }
 }
