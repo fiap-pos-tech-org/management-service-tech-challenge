@@ -7,11 +7,9 @@ import br.com.fiap.techchallenge.management.adapters.web.models.requests.Cliente
 import br.com.fiap.techchallenge.management.adapters.web.models.responses.ClienteResponse;
 import br.com.fiap.techchallenge.management.core.domain.exceptions.EntityNotFoundException;
 import br.com.fiap.techchallenge.management.core.dtos.ClienteDTO;
-import br.com.fiap.techchallenge.management.core.dtos.ProdutoDTO;
 import br.com.fiap.techchallenge.management.core.ports.in.cliente.*;
 import br.com.fiap.techchallenge.management.utils.ClienteHelper;
 import br.com.fiap.techchallenge.management.utils.ObjectParaJsonMapper;
-import br.com.fiap.techchallenge.management.utils.ProdutoHelper;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -38,7 +36,7 @@ public class ClienteControllerTest {
     @Mock
     private CadastraClienteInputPort cadastraClienteInputPort;
     @Mock
-    private RemoveClientePorIdInputPort removeClientePorIdInputPort;
+    private RemoveClienteInputPort removeClienteInputPort;
     @Mock
     private ClienteMapper mapperWeb;
     private ClienteDTO clienteDTO;
@@ -55,7 +53,7 @@ public class ClienteControllerTest {
                 buscaClientePorIdOuCpfInputPort,
                 buscaTodosClientesInputPort,
                 cadastraClienteInputPort,
-                removeClientePorIdInputPort,
+                removeClienteInputPort,
                 mapperWeb
         );
         mockMvc = MockMvcBuilders.standaloneSetup(clienteController).setControllerAdvice(new ExceptionsHandler()).build();
@@ -178,15 +176,15 @@ public class ClienteControllerTest {
     class RemoveCliente {
 
         @Test
-        @DisplayName("Deve remover um cliente por id quando o id informado existir")
-        void deveRemoverUmClientePorId_QuandoIdInformadoExistir() throws Exception {
+        @DisplayName("Deve remover um cliente por CPF quando o id informado existir")
+        void deveRemoverUmClientePorCpf_QuandoCpfInformadoExistir() throws Exception {
             //Arrange
-            when(removeClientePorIdInputPort.removerPorId(anyLong())).thenReturn(ClienteHelper.criaClienteDTO());
+            when(removeClienteInputPort.remover(anyString())).thenReturn(ClienteHelper.criaClienteDTO());
             when(mapperWeb.toClienteResponse(any(ClienteDTO.class))).thenReturn(ClienteHelper.criaClienteResponse());
 
             //Act
             //Assert
-            mockMvc.perform(delete("/clientes/{id}", 1L)
+            mockMvc.perform(delete("/clientes/{cpf}", "94187479015")
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpectAll(
@@ -218,16 +216,16 @@ public class ClienteControllerTest {
         }
 
         @Test
-        @DisplayName("Deve retornar Not Found quando id do cliente não existir")
-        void deveRetornarNotFound_QuandoIdClienteNaoExistir() throws Exception {
+        @DisplayName("Deve retornar Not Found quando CPF do cliente não existir")
+        void deveRetornarNotFound_QuandoCpfClienteNaoExistir() throws Exception {
             //Arrange
-            Long id = 1L;
-            String mensagem = String.format("Cliente com id %s não encontrado", id);
-            when(removeClientePorIdInputPort.removerPorId(anyLong())).thenThrow(new EntityNotFoundException(mensagem));
+            var cpf = "94187479015";
+            String mensagem = String.format("Cliente com CPF %s não encontrado", cpf);
+            when(removeClienteInputPort.remover(anyString())).thenThrow(new EntityNotFoundException(mensagem));
 
             //Act
             //Assert
-            mockMvc.perform(delete("/clientes/{id}", id)
+            mockMvc.perform(delete("/clientes/{id}", cpf)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.message").value(mensagem));

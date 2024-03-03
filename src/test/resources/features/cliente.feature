@@ -23,7 +23,7 @@ Funcionalidade: Cliente
     Quando realizar a busca do cliente
     Então o cliente deve ser exibido com sucesso
 
-  Cenário: Remover um cliente por id
+  Cenário: Remover um cliente por CPF
     Dado que um cliente já está cadastrado
-    Quando realizar a requisição para remover o cliente por id
+    Quando realizar a requisição para remover o cliente
     Então o cliente deve ser removido com sucesso

@@ -68,8 +68,8 @@ public class CoreInjectionConfig {
     }
 
     @Bean
-    RemoveClientePorIdInputPort removerPorId(RemoveClientePorIdOutputPort removeClientePorIdOutputPort) {
-        return new RemoveClientePorIdUseCase(removeClientePorIdOutputPort);
+    RemoveClienteInputPort removerCliente(RemoveClienteOutputPort removeClienteOutputPort) {
+        return new RemoveClienteUseCase(removeClienteOutputPort);
     }
 
 }

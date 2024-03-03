@@ -18,7 +18,7 @@ import java.util.List;
 
 @Repository
 public class ClienteRepository implements AtualizaClienteOutputPort, BuscaClienteOutputPort, BuscaTodosClientesOutputPort,
-        CadastraClienteOutputPort, RemoveClientePorIdOutputPort {
+        CadastraClienteOutputPort, RemoveClienteOutputPort {
 
     private final ClienteJpaRepository clienteJpaRepository;
     private final ClienteMapper mapper;
@@ -47,17 +47,14 @@ public class ClienteRepository implements AtualizaClienteOutputPort, BuscaClient
     // implement unit tests for the buscar(String cpf) method
     @Override
     public ClienteDTO buscar(String cpf) {
-        Cliente cliente = clienteJpaRepository.findByCpf(cpf)
-                .orElseThrow(
-                        () -> new EntityNotFoundException(String.format("Cliente com CPF %s não encontrado", cpf))
-                );
-
+        var cliente = buscaClientePorCpf(cpf);
         return mapper.toClienteDTO(cliente);
     }
 
     @Override
     public ClienteDTO buscar(Long id) {
-        var cliente = buscaClientePorId(id);
+        var cliente = clienteJpaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Cliente com id %s não encontrado", id)));
         return mapper.toClienteDTO(cliente);
     }
 
@@ -81,14 +78,14 @@ public class ClienteRepository implements AtualizaClienteOutputPort, BuscaClient
     }
 
     @Override
-    public ClienteDTO removerPorId(Long id) {
-        var cliente = buscaClientePorId(id);
+    public ClienteDTO remover(String cpf) {
+        var cliente = buscaClientePorCpf(cpf);
         clienteJpaRepository.delete(cliente);
         return mapper.toClienteDTO(cliente);
     }
 
-    private Cliente buscaClientePorId(Long id) {
-        return clienteJpaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Cliente com id %s não encontrado", id)));
+    private Cliente buscaClientePorCpf(String cpf) {
+        return clienteJpaRepository.findByCpf(cpf)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Cliente com CPF %s não encontrado", cpf)));
     }
 }

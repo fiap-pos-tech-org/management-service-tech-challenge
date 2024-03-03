@@ -2,7 +2,7 @@ package br.com.fiap.techchallenge.management.core.ports.in.cliente;
 
 import br.com.fiap.techchallenge.management.core.dtos.ClienteDTO;
 
-public interface RemoveClientePorIdInputPort {
+public interface RemoveClienteInputPort {
 
-    ClienteDTO removerPorId(Long id);
+    ClienteDTO remover(String cpf);
 }

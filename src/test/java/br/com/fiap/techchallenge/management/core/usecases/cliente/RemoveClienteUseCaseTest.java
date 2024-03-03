@@ -19,16 +19,15 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-public class RemoveClientePorIdUseCaseTest {
+public class RemoveClienteUseCaseTest {
 
     @Mock
     private ClienteJpaRepository clienteJpaRepository;
     private ClienteMapper clienteMapper;
     private ClienteRepository clienteRepository;
-    private RemoveClientePorIdUseCase removeClientePorIdUseCase;
+    private RemoveClienteUseCase removeClienteUseCase;
     private AutoCloseable openMocks;
 
     @BeforeEach
@@ -36,7 +35,7 @@ public class RemoveClientePorIdUseCaseTest {
         openMocks = MockitoAnnotations.openMocks(this);
         clienteMapper = new ClienteMapper(new EnderecoMapper());
         clienteRepository = new ClienteRepository(clienteJpaRepository, clienteMapper);
-        removeClientePorIdUseCase = new RemoveClientePorIdUseCase(clienteRepository);
+        removeClienteUseCase = new RemoveClienteUseCase(clienteRepository);
     }
 
     @AfterEach
@@ -45,37 +44,37 @@ public class RemoveClientePorIdUseCaseTest {
     }
 
     @Test
-    @DisplayName("Deve remover um cliente por id quando o id informado existir")
-    void deveRemoverUmClientePorId_QuandoIdInformadoExistir() {
+    @DisplayName("Deve remover um cliente por CPF quando o id informado existir")
+    void deveRemoverUmClientePorCpf_QuandoCpfInformadoExistir() {
         //Arrange
         var clienteSalvo = ClienteHelper.criaCliente();
-        when(clienteJpaRepository.findById(anyLong())).thenReturn(Optional.of(clienteSalvo));
+        when(clienteJpaRepository.findByCpf(anyString())).thenReturn(Optional.of(clienteSalvo));
         doNothing().when(clienteJpaRepository).delete(any(Cliente.class));
 
         //Act
-        var clienteDTO = removeClientePorIdUseCase.removerPorId(1L);
+        var clienteDTO = removeClienteUseCase.remover("94187479015");
 
         //Assert
         assertThat(clienteDTO).isNotNull();
 
-        verify(clienteJpaRepository, times(1)).findById(anyLong());
-        verify(clienteJpaRepository, times(1)).delete(any(Cliente.class));
+        verify(clienteJpaRepository).findByCpf(anyString());
+        verify(clienteJpaRepository).delete(any(Cliente.class));
     }
 
     @Test
-    @DisplayName("Deve lançar EntityNotFoundException quando id do cliente informado não existir")
-    void deveLancarEntityNotFoundException_QuandoIdClienteInformadoNaoExistir() {
+    @DisplayName("Deve lançar EntityNotFoundException quando CPF do cliente informado não existir")
+    void deveLancarEntityNotFoundException_QuandoCpfClienteInformadoNaoExistir() {
         //Arrange
-        Long id = 1L;
-        String message = String.format("Cliente com id %s não encontrado", id);
-        when(clienteJpaRepository.findById(anyLong())).thenReturn(Optional.empty());
+        var cpf = "94187479015";
+        String message = String.format("Cliente com CPF %s não encontrado", cpf);
+        when(clienteJpaRepository.findByCpf(anyString())).thenReturn(Optional.empty());
 
         //Act
         //Assert
-        assertThatThrownBy(() -> removeClientePorIdUseCase.removerPorId(id))
+        assertThatThrownBy(() -> removeClienteUseCase.remover(cpf))
                 .isInstanceOf(EntityNotFoundException.class)
                 .hasMessage(message);
 
-        verify(clienteJpaRepository, times(1)).findById(anyLong());
+        verify(clienteJpaRepository).findByCpf(anyString());
     }
 }

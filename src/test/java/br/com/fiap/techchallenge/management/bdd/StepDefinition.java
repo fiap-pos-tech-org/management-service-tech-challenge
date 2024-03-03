@@ -242,13 +242,13 @@ public class StepDefinition {
                 .body(matchesJsonSchemaInClasspath("./schemas/ClienteResponseSchema.json"));
     }
 
-    @Quando("realizar a requisição para remover o cliente por id")
-    public void realizarRequisicaoParaRemoverClientePorId() {
+    @Quando("realizar a requisição para remover o cliente")
+    public void realizarRequisicaoParaRemoverCliente() {
         response = given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(clienteResponse)
                 .when()
-                .delete("/clientes/{id}", clienteResponse.getId());
+                .delete("/clientes/{cpf}", clienteResponse.getCpf());
     }
 
     @Então("o cliente deve ser removido com sucesso")
