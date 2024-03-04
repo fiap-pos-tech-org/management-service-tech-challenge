@@ -13,7 +13,7 @@ public class ClienteMapperTest {
     @DisplayName("Deve retornar um objeto tipo ClienteResponse quando receber como parâmetro um ClienteDTO")
     void deveRetornarUmObjetoTipoClienteResponse_QuandoReceberComoParametroUmClienteDTO() {
         //Arrange
-        ClienteMapper clienteMapper = new ClienteMapper();
+        ClienteMapper clienteMapper = new ClienteMapper(new EnderecoMapper());
         //Act
         var clienteResponse = clienteMapper.toClienteResponse(ClienteHelper.criaClienteDTO());
         //Assert
@@ -24,7 +24,7 @@ public class ClienteMapperTest {
     @DisplayName("Deve retornar uma lista de objetos tipo ClienteResponse quando receber como parâmetro uma lista de ClienteDTO")
     void deveRetornarUmaListaDeObjetosTipoClienteResponse_QuandoReceberComoParametroUmaListaDeClienteDTO() {
         //Arrange
-        ClienteMapper clienteMapper = new ClienteMapper();
+        ClienteMapper clienteMapper = new ClienteMapper(new EnderecoMapper());
         //Act
         var clientesResponse = clienteMapper.toClientesResponse(List.of(ClienteHelper.criaClienteDTO()));
         //Assert
