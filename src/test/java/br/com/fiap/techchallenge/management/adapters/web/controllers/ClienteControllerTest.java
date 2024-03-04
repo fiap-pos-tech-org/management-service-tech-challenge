@@ -7,10 +7,7 @@ import br.com.fiap.techchallenge.management.adapters.web.models.requests.Cliente
 import br.com.fiap.techchallenge.management.adapters.web.models.responses.ClienteResponse;
 import br.com.fiap.techchallenge.management.core.domain.exceptions.EntityNotFoundException;
 import br.com.fiap.techchallenge.management.core.dtos.ClienteDTO;
-import br.com.fiap.techchallenge.management.core.ports.in.cliente.AtualizaClienteInputPort;
-import br.com.fiap.techchallenge.management.core.ports.in.cliente.BuscaClientePorIdOuCpfInputPort;
-import br.com.fiap.techchallenge.management.core.ports.in.cliente.BuscaTodosClientesInputPort;
-import br.com.fiap.techchallenge.management.core.ports.in.cliente.CadastraClienteInputPort;
+import br.com.fiap.techchallenge.management.core.ports.in.cliente.*;
 import br.com.fiap.techchallenge.management.utils.ClienteHelper;
 import br.com.fiap.techchallenge.management.utils.ObjectParaJsonMapper;
 import org.junit.jupiter.api.*;
@@ -39,6 +36,8 @@ public class ClienteControllerTest {
     @Mock
     private CadastraClienteInputPort cadastraClienteInputPort;
     @Mock
+    private RemoveClienteInputPort removeClienteInputPort;
+    @Mock
     private ClienteMapper mapperWeb;
     private ClienteDTO clienteDTO;
     private ClienteResponse clienteResponse;
@@ -54,6 +53,7 @@ public class ClienteControllerTest {
                 buscaClientePorIdOuCpfInputPort,
                 buscaTodosClientesInputPort,
                 cadastraClienteInputPort,
+                removeClienteInputPort,
                 mapperWeb
         );
         mockMvc = MockMvcBuilders.standaloneSetup(clienteController).setControllerAdvice(new ExceptionsHandler()).build();
@@ -170,4 +170,67 @@ public class ClienteControllerTest {
                     .andExpect(jsonPath("$.email").value("cliente1@email.com"));
         }
     }
+
+    @Nested
+    @DisplayName("Remove um cliente")
+    class RemoveCliente {
+
+        @Test
+        @DisplayName("Deve remover um cliente por CPF quando o id informado existir")
+        void deveRemoverUmClientePorCpf_QuandoCpfInformadoExistir() throws Exception {
+            //Arrange
+            when(removeClienteInputPort.remover(anyString())).thenReturn(ClienteHelper.criaClienteDTO());
+            when(mapperWeb.toClienteResponse(any(ClienteDTO.class))).thenReturn(ClienteHelper.criaClienteResponse());
+
+            //Act
+            //Assert
+            mockMvc.perform(delete("/clientes/{cpf}", "94187479015")
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk())
+                    .andExpectAll(
+                            jsonPath("$.id").isNotEmpty(),
+                            jsonPath("$.id").isNumber(),
+                            jsonPath("$.nome").isNotEmpty(),
+                            jsonPath("$.nome").isString(),
+                            jsonPath("$.cpf").isNotEmpty(),
+                            jsonPath("$.cpf").isString(),
+                            jsonPath("$.email").isNotEmpty(),
+                            jsonPath("$.email").isString(),
+                            jsonPath("$.telefone").isNotEmpty(),
+                            jsonPath("$.telefone").isString(),
+                            jsonPath("$.endereco.id").isNotEmpty(),
+                            jsonPath("$.endereco.id").isNumber(),
+                            jsonPath("$.endereco.logradouro").isNotEmpty(),
+                            jsonPath("$.endereco.logradouro").isString(),
+                            jsonPath("$.endereco.rua").isNotEmpty(),
+                            jsonPath("$.endereco.rua").isString(),
+                            jsonPath("$.endereco.numero").isNotEmpty(),
+                            jsonPath("$.endereco.numero").isNumber(),
+                            jsonPath("$.endereco.bairro").isNotEmpty(),
+                            jsonPath("$.endereco.bairro").isString(),
+                            jsonPath("$.endereco.cidade").isNotEmpty(),
+                            jsonPath("$.endereco.cidade").isString(),
+                            jsonPath("$.endereco.estado").isNotEmpty(),
+                            jsonPath("$.endereco.estado").isString()
+                    );
+        }
+
+        @Test
+        @DisplayName("Deve retornar Not Found quando CPF do cliente não existir")
+        void deveRetornarNotFound_QuandoCpfClienteNaoExistir() throws Exception {
+            //Arrange
+            var cpf = "94187479015";
+            String mensagem = String.format("Cliente com CPF %s não encontrado", cpf);
+            when(removeClienteInputPort.remover(anyString())).thenThrow(new EntityNotFoundException(mensagem));
+
+            //Act
+            //Assert
+            mockMvc.perform(delete("/clientes/{id}", cpf)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isNotFound())
+                    .andExpect(jsonPath("$.message").value(mensagem));
+
+        }
+    }
+
 }

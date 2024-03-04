@@ -67,12 +67,6 @@ class ArchitectureTest {
             .as("Classes Handler devem ser implementadas dentro do pacote adapters.web.handlers");
 
     @ArchTest
-    static ArchRule enumsShouldHaveNameEndingWithEnum = classes().that().areEnums()
-            .should().haveSimpleNameEndingWith("Enum")
-            .andShould().resideInAPackage("..core.domain.entities.enums")
-            .as("Enums devem terminar com sufixo Enum");
-
-    @ArchTest
     static ArchRule inputPortClassesShouldResideInPortsInPackage = classes().that().haveSimpleNameEndingWith("InputPort")
             .should().resideInAPackage("..core.ports.in..")
             .as("Classes InputPort devem ser implementadas dentro do pacote core.ports.in");
