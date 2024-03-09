@@ -57,6 +57,16 @@ public class ClienteController extends ControllerBase {
         return ResponseEntity.ok(clienteResponse);
     }
 
+    @Operation(summary = "Busca um Cliente por Id")
+    @GetMapping("/{id}")
+    public ResponseEntity<ClienteResponse> buscaPorId(@Parameter(example = "1")
+                                                      @PathVariable("id")
+                                                      @Pattern(regexp = "^\\d*$", message = "O id do cliente deve conter apenas números") String id) {
+        var clienteDTO = buscaClientePorIdOuCpfInputPort.buscar(Long.parseLong(id));
+        var clienteResponse = mapperWeb.toClienteResponse(clienteDTO);
+        return ResponseEntity.ok(clienteResponse);
+    }
+
     @Operation(summary = "Busca todos os Clientes")
     @GetMapping
     public ResponseEntity<List<ClienteResponse>> buscaTodos() {

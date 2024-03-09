@@ -87,8 +87,8 @@ public class StepDefinition {
                 .body("$", everyItem(anything()));
     }
 
-    @Quando("realizar a busca do cliente")
-    public void realizarBuscaCliente() {
+    @Quando("realizar a busca do cliente por CPF")
+    public void realizarBuscaClientePorCpf() {
         response = given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
@@ -116,6 +116,14 @@ public class StepDefinition {
         response.then()
                 .statusCode(HttpStatus.OK.value())
                 .body(matchesJsonSchemaInClasspath("./schemas/ClienteResponseSchema.json"));
+    }
+
+    @Quando("realizar a busca do cliente por Id")
+    public void realizarBuscaClientePorId() {
+        response = given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get("/clientes/{id}", clienteResponse.getId());
     }
 
 }

@@ -103,6 +103,40 @@ public class ClienteControllerTest {
     }
 
     @Nested
+    @DisplayName("Busca por Id")
+    class BuscaPorId {
+
+        @Test
+        @DisplayName("Deve retornar um cliente quando informado um id válido")
+        void deveRetornarUmCliente_QuandoInformadoUmIdValido() throws Exception {
+            //Arrange
+            when(buscaClientePorIdOuCpfInputPort.buscar(anyLong())).thenReturn(clienteDTO);
+            when(mapperWeb.toClienteResponse(any(ClienteDTO.class))).thenReturn(clienteResponse);
+
+            //Act
+            //Assert
+            mockMvc.perform(get("/clientes/{id}", "1"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.cpf").value("56312729036"))
+                    .andExpect(jsonPath("$.email").value("cliente1@email.com"));
+            verify(buscaClientePorIdOuCpfInputPort, times(1)).buscar(anyLong());
+        }
+
+        @Test
+        @DisplayName("Deve retornar not found quando informado um id inválido")
+        void deveRetornarNotFound_QuandoInformadoUmIdInvalido() throws Exception {
+            //Arrange
+            when(buscaClientePorIdOuCpfInputPort.buscar(anyLong())).thenThrow(EntityNotFoundException.class);
+
+            //Act
+            //Assert
+            mockMvc.perform(get("/clientes/{id}", "1"))
+                    .andExpect(status().isNotFound());
+            verify(buscaClientePorIdOuCpfInputPort, times(1)).buscar(anyLong());
+        }
+    }
+
+    @Nested
     @DisplayName("Busca todos os clientes")
     class BuscaTodosClientes {
 
@@ -172,7 +206,7 @@ public class ClienteControllerTest {
     }
 
     @Nested
-    @DisplayName("Remove um cliente")
+    @DisplayName("Remove um cliente por CPF")
     class RemoveCliente {
 
         @Test
