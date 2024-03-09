@@ -92,7 +92,7 @@ public class StepDefinition {
         response = given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .get("/clientes/{cpf}", clienteResponse.getCpf());
+                .get("/clientes/cpf/{cpf}", clienteResponse.getCpf());
     }
 
     @Então("o cliente deve ser exibido com sucesso")
@@ -108,7 +108,7 @@ public class StepDefinition {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(clienteResponse)
                 .when()
-                .delete("/clientes/{cpf}", clienteResponse.getCpf());
+                .delete("/clientes/cpf/{cpf}", clienteResponse.getCpf());
     }
 
     @Então("o cliente deve ser removido com sucesso")

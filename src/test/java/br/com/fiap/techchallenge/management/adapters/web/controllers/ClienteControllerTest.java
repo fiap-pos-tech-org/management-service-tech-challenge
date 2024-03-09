@@ -81,7 +81,7 @@ public class ClienteControllerTest {
 
             //Act
             //Assert
-            mockMvc.perform(get("/clientes/{cpf}", "56312729036"))
+            mockMvc.perform(get("/clientes/cpf/{cpf}", "56312729036"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.cpf").value("56312729036"))
                     .andExpect(jsonPath("$.email").value("cliente1@email.com"));
@@ -96,7 +96,7 @@ public class ClienteControllerTest {
 
             //Act
             //Assert
-            mockMvc.perform(get("/clientes/{cpf}", "10000000007"))
+            mockMvc.perform(get("/clientes/cpf/{cpf}", "10000000007"))
                     .andExpect(status().isNotFound());
             verify(buscaClientePorIdOuCpfInputPort, times(1)).buscar(anyString());
         }
@@ -184,7 +184,7 @@ public class ClienteControllerTest {
 
             //Act
             //Assert
-            mockMvc.perform(delete("/clientes/{cpf}", "94187479015")
+            mockMvc.perform(delete("/clientes/cpf/{cpf}", "94187479015")
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpectAll(
@@ -225,7 +225,7 @@ public class ClienteControllerTest {
 
             //Act
             //Assert
-            mockMvc.perform(delete("/clientes/{id}", cpf)
+            mockMvc.perform(delete("/clientes/cpf/{id}", cpf)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.message").value(mensagem));
