@@ -20,7 +20,12 @@ Funcionalidade: Cliente
 
   Cenário: Buscar um cliente por CPF
     Dado que um cliente já está cadastrado
-    Quando realizar a busca do cliente
+    Quando realizar a busca do cliente por CPF
+    Então o cliente deve ser exibido com sucesso
+
+  Cenário: Buscar um cliente por Id
+    Dado que um cliente já está cadastrado
+    Quando realizar a busca do cliente por Id
     Então o cliente deve ser exibido com sucesso
 
   Cenário: Remover um cliente por CPF

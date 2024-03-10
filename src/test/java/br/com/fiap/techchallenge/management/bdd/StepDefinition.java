@@ -87,12 +87,12 @@ public class StepDefinition {
                 .body("$", everyItem(anything()));
     }
 
-    @Quando("realizar a busca do cliente")
-    public void realizarBuscaCliente() {
+    @Quando("realizar a busca do cliente por CPF")
+    public void realizarBuscaClientePorCpf() {
         response = given()
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .when()
-                .get("/clientes/{cpf}", clienteResponse.getCpf());
+                .get("/clientes/cpf/{cpf}", clienteResponse.getCpf());
     }
 
     @Então("o cliente deve ser exibido com sucesso")
@@ -108,7 +108,7 @@ public class StepDefinition {
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .body(clienteResponse)
                 .when()
-                .delete("/clientes/{cpf}", clienteResponse.getCpf());
+                .delete("/clientes/cpf/{cpf}", clienteResponse.getCpf());
     }
 
     @Então("o cliente deve ser removido com sucesso")
@@ -116,6 +116,14 @@ public class StepDefinition {
         response.then()
                 .statusCode(HttpStatus.OK.value())
                 .body(matchesJsonSchemaInClasspath("./schemas/ClienteResponseSchema.json"));
+    }
+
+    @Quando("realizar a busca do cliente por Id")
+    public void realizarBuscaClientePorId() {
+        response = given()
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .when()
+                .get("/clientes/{id}", clienteResponse.getId());
     }
 
 }
