@@ -46,7 +46,7 @@ public class ClienteController extends ControllerBase {
     }
 
     @Operation(summary = "Busca um Cliente pelo CPF")
-    @GetMapping("/{cpf}")
+    @GetMapping("/cpf/{cpf}")
     public ResponseEntity<ClienteResponse> buscaPorCpf(@Parameter(example = "94187479015")
                                                        @Pattern(regexp = "^\\d{11}$", message = "CPF informado inválido")
                                                        @PathVariable String cpf) {
@@ -54,6 +54,16 @@ public class ClienteController extends ControllerBase {
                 buscaClientePorIdOuCpfInputPort.buscar(cpf)
         );
 
+        return ResponseEntity.ok(clienteResponse);
+    }
+
+    @Operation(summary = "Busca um Cliente por Id")
+    @GetMapping("/{id}")
+    public ResponseEntity<ClienteResponse> buscaPorId(@Parameter(example = "1")
+                                                      @PathVariable("id")
+                                                      @Pattern(regexp = "^\\d*$", message = "O id do cliente deve conter apenas números") String id) {
+        var clienteDTO = buscaClientePorIdOuCpfInputPort.buscar(Long.parseLong(id));
+        var clienteResponse = mapperWeb.toClienteResponse(clienteDTO);
         return ResponseEntity.ok(clienteResponse);
     }
 
@@ -90,7 +100,7 @@ public class ClienteController extends ControllerBase {
     }
 
     @Operation(summary = "Remove Cliente por CPF")
-    @DeleteMapping(value = "/{cpf}")
+    @DeleteMapping(value = "/cpf/{cpf}")
     public ResponseEntity<ClienteResponse> remover(@Parameter(example = "94187479015")
                                                    @Pattern(regexp = "^\\d{11}$", message = "CPF informado inválido")
                                                    @PathVariable("cpf") String cpf) {

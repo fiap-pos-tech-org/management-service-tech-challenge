@@ -81,7 +81,7 @@ public class ClienteControllerTest {
 
             //Act
             //Assert
-            mockMvc.perform(get("/clientes/{cpf}", "56312729036"))
+            mockMvc.perform(get("/clientes/cpf/{cpf}", "56312729036"))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.cpf").value("56312729036"))
                     .andExpect(jsonPath("$.email").value("cliente1@email.com"));
@@ -96,9 +96,43 @@ public class ClienteControllerTest {
 
             //Act
             //Assert
-            mockMvc.perform(get("/clientes/{cpf}", "10000000007"))
+            mockMvc.perform(get("/clientes/cpf/{cpf}", "10000000007"))
                     .andExpect(status().isNotFound());
             verify(buscaClientePorIdOuCpfInputPort, times(1)).buscar(anyString());
+        }
+    }
+
+    @Nested
+    @DisplayName("Busca por Id")
+    class BuscaPorId {
+
+        @Test
+        @DisplayName("Deve retornar um cliente quando informado um id válido")
+        void deveRetornarUmCliente_QuandoInformadoUmIdValido() throws Exception {
+            //Arrange
+            when(buscaClientePorIdOuCpfInputPort.buscar(anyLong())).thenReturn(clienteDTO);
+            when(mapperWeb.toClienteResponse(any(ClienteDTO.class))).thenReturn(clienteResponse);
+
+            //Act
+            //Assert
+            mockMvc.perform(get("/clientes/{id}", "1"))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.cpf").value("56312729036"))
+                    .andExpect(jsonPath("$.email").value("cliente1@email.com"));
+            verify(buscaClientePorIdOuCpfInputPort, times(1)).buscar(anyLong());
+        }
+
+        @Test
+        @DisplayName("Deve retornar not found quando informado um id inválido")
+        void deveRetornarNotFound_QuandoInformadoUmIdInvalido() throws Exception {
+            //Arrange
+            when(buscaClientePorIdOuCpfInputPort.buscar(anyLong())).thenThrow(EntityNotFoundException.class);
+
+            //Act
+            //Assert
+            mockMvc.perform(get("/clientes/{id}", "1"))
+                    .andExpect(status().isNotFound());
+            verify(buscaClientePorIdOuCpfInputPort, times(1)).buscar(anyLong());
         }
     }
 
@@ -172,7 +206,7 @@ public class ClienteControllerTest {
     }
 
     @Nested
-    @DisplayName("Remove um cliente")
+    @DisplayName("Remove um cliente por CPF")
     class RemoveCliente {
 
         @Test
@@ -184,7 +218,7 @@ public class ClienteControllerTest {
 
             //Act
             //Assert
-            mockMvc.perform(delete("/clientes/{cpf}", "94187479015")
+            mockMvc.perform(delete("/clientes/cpf/{cpf}", "94187479015")
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpectAll(
@@ -225,7 +259,7 @@ public class ClienteControllerTest {
 
             //Act
             //Assert
-            mockMvc.perform(delete("/clientes/{id}", cpf)
+            mockMvc.perform(delete("/clientes/cpf/{id}", cpf)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.message").value(mensagem));
