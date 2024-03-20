@@ -9,8 +9,8 @@ RUN mkdir /app
 RUN apt-get update && apt-get install -y dumb-init
 COPY --from=build /app/target/management-service-tech-challenge-*.jar /app/java-application.jar
 WORKDIR /app
-RUN addgroup --system management-svc-tech-challenge-app && useradd -r management-svc-tech-challenge-app -g management-svc-tech-challenge-app
-RUN chown -R management-svc-tech-challenge-app:management-svc-tech-challenge-app /app
-USER management-svc-tech-challenge-app
+RUN addgroup --system mgmt-svc-tech-challenge-app && useradd -r mgmt-svc-tech-challenge-app -g mgmt-svc-tech-challenge-app
+RUN chown -R mgmt-svc-tech-challenge-app:mgmt-svc-tech-challenge-app /app
+USER mgmt-svc-tech-challenge-app
 EXPOSE 8080
 CMD "dumb-init" "java" "-jar" "java-application.jar"
