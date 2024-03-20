@@ -35,7 +35,7 @@ spec:
             path: /home/servico-gerenciamento-volume
             type: DirectoryOrCreate
       serviceAccountName: gerenciamento-serviceaccount
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: servico-gerenciamento
